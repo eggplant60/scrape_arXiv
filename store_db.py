@@ -32,7 +32,7 @@ base_url = 'http://export.arxiv.org/api/query?';
 
 # Search parameters
 start = 0                     # retreive the first 5 results
-total_results = 10000         # want 20 total results
+total_results = 15000         # want 20 total results
 results_per_iteration = 100   # 5 results at a time
 wait_time = 3                 # number of seconds to wait beetween calls
 
@@ -44,7 +44,8 @@ def extract_key(entry):
 
 
 def parse_entry(entry):
-    entry_data = {'arxiv-id' : extract_key(entry),
+    entry_data = {'key'      : extract_key(entry),
+                  'arxiv-id' : entry.id,
                   'Published': entry.published,
                   'Title'    : entry.title,
                   'Authors'  : ', '.join(author.name for author in entry.authors),
@@ -84,9 +85,8 @@ def parse_entry(entry):
 
 
 
-parser = argparse.ArgumentParser(prog='arXiv_parsing',
-                                 usage='get papers\'s metadata with arXiv API',
-                                 description='description', # 引数のヘルプの前に表示
+parser = argparse.ArgumentParser(prog='store_db',
+                                 usage='Get papers\'s metadata with arXiv API, and store it on DB',
                                  add_help=True, # -h/?help オプションの追加
 )
 parser.add_argument('-q', '--search_query', type=str, required=True,
@@ -99,7 +99,9 @@ args = parser.parse_args()
 # main
 #-----------------------------
 client = MongoClient('localhost', 27017) # 第2引数はポート番号
-collection = client.scraping.paper   # scraping データベースの paper コレクションを得る（ない場合は新規作成）
+#collection = client.scraping.paper   # scraping データベースの paper コレクションを得る（ない場合は新規作成
+#collection.drop()
+collection = client.scraping.paper   # scraping データベースの paper コレクションを得る（ない場合は新規作成
 collection.create_index('key', unique=True)
 
 print('Searching arXiv for %s' % args.search_query)
@@ -136,7 +138,7 @@ for i in range(start,total_results,results_per_iteration):
         #print(entry_data)
         try:
             collection.insert_one(entry_data)
-            print("saving data on DB...")
+            #print("saving data on DB...")
         except:
             print("This entry exists already.")
 
