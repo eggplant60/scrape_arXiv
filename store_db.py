@@ -32,8 +32,8 @@ base_url = 'http://export.arxiv.org/api/query?';
 
 # Search parameters
 start = 0                     # retreive the first 5 results
-total_results = 15000         # want 20 total results
-results_per_iteration = 100   # 5 results at a time
+total_results = 100000        # want 20 total results
+results_per_iteration = 1000  # 5 results at a time
 wait_time = 3                 # number of seconds to wait beetween calls
 
 
@@ -124,6 +124,11 @@ for i in range(start,total_results,results_per_iteration):
                                                          results_per_iteration)
     feed = feedparser.parse(base_url+query)
 
+    # 検索範囲を超えたら終了
+    if int(feed.feed.opensearch_totalresults) < i:
+        print("Search is completed.")
+        break
+
     # print out feed information and opensearch metadata
     print('Feed title: %s' % feed.feed.title)
     print('Feed last updated: %s' % feed.feed.updated)
@@ -140,6 +145,7 @@ for i in range(start,total_results,results_per_iteration):
             collection.insert_one(entry_data)
             #print("saving data on DB...")
         except:
-            print("This entry exists already.")
+            pass
+            #print("This entry exists already.")
 
     time.sleep(wait_time)
