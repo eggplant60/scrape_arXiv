@@ -28,9 +28,9 @@ arXiv API を使って論文のメタデータを取得し、DB に突っ込み�
     ```./read_db.py```
 
     → 以下の4つのテキストファイルが生成される
-    - train_src.txt
-    - train_tgt.txt
-    - test_src.txt
-    - test_tgt.txt
+    - train_abst.txt
+    - train_title.txt
+    - test_abst.txt
+    - test_title.txt
 
     --n_train オプションで train のエントリ数を変更可能。残りが test になる。

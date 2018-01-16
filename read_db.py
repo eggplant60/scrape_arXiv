@@ -11,7 +11,7 @@ import numpy as np
 
 
 def read_db():
-    client = MongoClient('localhost', 27017) # 第2引数はポート番号
+    client = MongoClient('mongo', 27017) # 第2引数はポート番号
     collection = client.scraping.paper       # scraping データベースの paper コレクションを得る
 
     titles = []
@@ -29,10 +29,10 @@ if __name__ == '__main__':
                                      usage='read DB and output train text',
                                      add_help=True, # -h/?help オプションの追加
     )
-    parser.add_argument('--train_src', type=str, default='train_src.txt')
-    parser.add_argument('--train_tgt', type=str, default='train_tgt.txt')
-    parser.add_argument('--test_src', type=str, default='test_src.txt')
-    parser.add_argument('--test_tgt', type=str, default='test_tgt.txt')
+    parser.add_argument('--train_abst', type=str, default='train_abst.txt')
+    parser.add_argument('--train_title', type=str, default='train_title.txt')
+    parser.add_argument('--test_abst', type=str, default='test_abst.txt')
+    parser.add_argument('--test_title', type=str, default='test_title.txt')
     parser.add_argument('--n_train', type=int, default=10000)
     args = parser.parse_args()
 
@@ -40,20 +40,20 @@ if __name__ == '__main__':
 
     idx = np.random.permutation(len(titles))
 
-    f_src = open(args.train_src, 'w')
-    f_tgt = open(args.train_tgt, 'w')
+    f_abst = open(args.train_abst, 'w')
+    f_title = open(args.train_title, 'w')
     for i in idx[:args.n_train]:
-        f_src.write(abstracts[i] + '\n')
-        f_tgt.write(titles[i] + '\n')
-    f_src.close()
-    f_tgt.close()
+        f_abst.write(abstracts[i] + '\n')
+        f_title.write(titles[i] + '\n')
+    f_abst.close()
+    f_title.close()
 
-    f_src = open(args.test_src, 'w')
-    f_tgt = open(args.test_tgt, 'w')
+    f_abst = open(args.test_abst, 'w')
+    f_title = open(args.test_title, 'w')
     for i in idx[args.n_train:]:
-        f_src.write(abstracts[i] + '\n')
-        f_tgt.write(titles[i] + '\n')
-    f_src.close()
-    f_tgt.close()
+        f_abst.write(abstracts[i] + '\n')
+        f_title.write(titles[i] + '\n')
+    f_abst.close()
+    f_title.close()
 
     

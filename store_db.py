@@ -98,7 +98,7 @@ args = parser.parse_args()
 #-----------------------------
 # main
 #-----------------------------
-client = MongoClient('localhost', 27017) # 第2引数はポート番号
+client = MongoClient('mongo', 27017) # 第2引数はポート番号
 #collection = client.scraping.paper   # scraping データベースの paper コレクションを得る（ない場合は新規作成
 #collection.drop()
 collection = client.scraping.paper   # scraping データベースの paper コレクションを得る（ない場合は新規作成
