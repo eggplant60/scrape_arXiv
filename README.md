@@ -34,3 +34,7 @@ arXiv API を使って論文のメタデータを取得し、DB に突っ込み�
     - test_title.txt
 
     --n_train オプションで train のエントリ数を変更可能。残りが test になる。
+
+## 注意
+
+python 2.x では、read_db.py 実行時にエラー → python 3.x で実行してください。
