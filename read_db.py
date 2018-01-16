@@ -56,10 +56,4 @@ if __name__ == '__main__':
     f_src.close()
     f_tgt.close()
 
-
-
-
-    
-
-        
     
