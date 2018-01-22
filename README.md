@@ -17,7 +17,7 @@ arXiv API を使って論文のメタデータを取得し、DB に突っ込み�
 
 1. API Calling and Storing metadata on DB  
 
-    ```./store_db.py -q <search_query>```
+    ```./store_db.py -q SEARCH_QUERY```
 
    例：カテゴリが機械学習であるエントリの検索：`./store_db.py -q cat:stat.ML`
 
@@ -25,13 +25,15 @@ arXiv API を使って論文のメタデータを取得し、DB に突っ込み�
 
 2. Output metadata into a text
 
-    ```./read_db.py```
+    ```./read_db.py --prefix PREFIX [--n_train N]```
 
-    → 以下の4つのテキストファイルが生成される
-    - train_abst.txt
-    - train_title.txt
-    - test_abst.txt
-    - test_title.txt
+    → 以下の6つのテキストファイルが生成される
+    - [PREFIX]_train_abst.txt
+    - [PREFIX]_train_title.txt
+    - [PREFIX]_train_cat.txt
+    - [PREFIX]_test_abst.txt
+    - [PREFIX]_test_title.txt
+    - [PREFIX]_test_cat.txt
 
     --n_train オプションで train のエントリ数を変更可能。残りが test になる。
 

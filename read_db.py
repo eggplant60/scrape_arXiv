@@ -11,17 +11,21 @@ import numpy as np
 
 
 def read_db():
-    client = MongoClient('mongo', 27017) # 第2引数はポート番号
+    client = MongoClient('localhost', 27017) # 第2引数はポート番号
     collection = client.scraping.paper       # scraping データベースの paper コレクションを得る
 
     titles = []
     abstracts = []
+    categories = []
+    
     for entry in collection.find():
         titles.append(re.sub('\s+', ' ', entry['Title']).replace('\n', ''))
         abstracts.append(re.sub('\s+', ' ', entry['Abstract']).replace('\n', ''))
+        categories.append(re.sub('\s+', ' ', entry['Primary Category']).replace('\n', ''))
         #print('-' * 80)
         #time.sleep(1)
-    return titles, abstracts
+    print('number of the entries: {}'.format(collection.find().count()))
+    return titles, abstracts, categories
 
 
 if __name__ == '__main__':
@@ -29,31 +33,37 @@ if __name__ == '__main__':
                                      usage='read DB and output train text',
                                      add_help=True, # -h/?help オプションの追加
     )
-    parser.add_argument('--train_abst', type=str, default='train_abst.txt')
-    parser.add_argument('--train_title', type=str, default='train_title.txt')
-    parser.add_argument('--test_abst', type=str, default='test_abst.txt')
-    parser.add_argument('--test_title', type=str, default='test_title.txt')
-    parser.add_argument('--n_train', type=int, default=10000)
+    parser.add_argument('--prefix', type=str, required=True)
+    parser.add_argument('--n_train', type=int, default=69000)
     args = parser.parse_args()
 
-    titles, abstracts = read_db()
+    titles, abstracts, categories = read_db()
 
-    idx = np.random.permutation(len(titles))
+    n_entry = len(titles)
+    
+    if n_entry < args.n_train:
+        print('n_train needs to be less than {}'.format(n_entry))
+        exit()
+        
+    idx = np.random.permutation(n_entry)
 
-    f_abst = open(args.train_abst, 'w')
-    f_title = open(args.train_title, 'w')
-    for i in idx[:args.n_train]:
-        f_abst.write(abstracts[i] + '\n')
-        f_title.write(titles[i] + '\n')
-    f_abst.close()
-    f_title.close()
 
-    f_abst = open(args.test_abst, 'w')
-    f_title = open(args.test_title, 'w')
-    for i in idx[args.n_train:]:
-        f_abst.write(abstracts[i] + '\n')
-        f_title.write(titles[i] + '\n')
-    f_abst.close()
-    f_title.close()
+    def save2txt(prefix, start, end):
+        f_title = open(prefix + 'title.txt', 'w')
+        f_abst = open(prefix + 'abst.txt', 'w')
+        f_cat = open(prefix + 'cat.txt', 'w')
 
+        for i in idx[start:end]:
+            f_abst.write(abstracts[i] + '\n')
+            f_title.write(titles[i] + '\n')
+            f_cat.write(categories[i] + '\n')
+        f_abst.close()
+        f_title.close()
+        f_cat.close()
+
+    train_prefix = args.prefix + '_train_'
+    save2txt(train_prefix, 0, args.n_train)
+
+    test_prefix = args.prefix + '_test_'
+    save2txt(test_prefix, args.n_train, n_entry)
     

@@ -32,10 +32,9 @@ base_url = 'http://export.arxiv.org/api/query?';
 
 # Search parameters
 start = 0                     # retreive the first 5 results
-total_results = 100000        # want 20 total results
+total_results = 200000        # want 20 total results
 results_per_iteration = 1000  # 5 results at a time
 wait_time = 3                 # number of seconds to wait beetween calls
-
 
 
 
@@ -91,6 +90,7 @@ parser = argparse.ArgumentParser(prog='store_db',
 )
 parser.add_argument('-q', '--search_query', type=str, required=True,
                     help="ex: \"all:electron\"")
+parser.add_argument('-s', '--start', type=int, default=0)
 args = parser.parse_args()
 
 
@@ -98,7 +98,7 @@ args = parser.parse_args()
 #-----------------------------
 # main
 #-----------------------------
-client = MongoClient('mongo', 27017) # 第2引数はポート番号
+client = MongoClient('localhost', 27017) # 第2引数はポート番号
 #collection = client.scraping.paper   # scraping データベースの paper コレクションを得る（ない場合は新規作成
 #collection.drop()
 collection = client.scraping.paper   # scraping データベースの paper コレクションを得る（ない場合は新規作成
